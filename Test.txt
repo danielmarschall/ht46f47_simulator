@@ -1,0 +1,95 @@
+
+Testprogramme um Implementierungsdetails zu klären
+==================================================
+
+# Testprogramm 1:
+# 1. Mit welchem Wert wird A initialisiert?
+# 	Anzeige fängt mit 0, 1, 2, 4, ... an? Dann wird A mit 0 initialisiert
+# 2. Wird ProgramCounter nach $FF auf $00 zurückspringen?
+# 	=> Anzeige zählt langsam hoch => Überlauf, PC beginnt wieder bei 0
+#
+# 00:	29	WAIT 1s
+# 01:	71	SET A=A+1
+# 02:	54	SET Dout=A
+# 03:	00...
+#
+import re
+data='29 71 54 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+data = re.sub(r'[^0-9a-fA-F]+','', data)
+for b in [int(data[i:i+2],16) for i in range(0,len(data),2)]:
+	programmiereByte(b)
+
+------------------
+
+# Testprogramm 2:
+# Was passiert bei RET, wenn man bereits gesprungen ist?
+#	=> Anzeige zählt langsam hoch => RET bleibt gleich (man kommt zum letzten CALL)
+#	Anzeige blinkt => RET gilt als NOP
+#	Anzeige bleibt bei "1" => RET gilt als 0
+#
+# 00:	40	SET A=0
+# 01:	DF	CALL <PAGE>F
+# 02:	71	SET A=A+1
+# 03:	29	WAIT 1s
+# 04:	54	SET Dout=A
+# 05:	E0	RET
+# 06:	7A	SET A=~A
+# 07:	27	WAIT 200ms
+# 08:	54	SET Dout=A
+# 09:	33	JUMP -3
+# 0A:	00
+# 0B:	00
+# 0C:	00
+# 0D:	00
+# 0E:	00
+# 0F:	E0	RET
+#
+import re
+data='40 DF 71 29 54 E0 7A 27 54 33 00 00 00 00 00 E0'
+data = re.sub(r'[^0-9a-fA-F]+','', data)
+for b in [int(data[i:i+2],16) for i in range(0,len(data),2)]:
+	programmiereByte(b)
+
+------------------
+
+# Testprogramm 3:
+# Was passiert mit RET wenn man nie einen CALL gemacht hat?
+#	=> Anzeige bleibt bei Zahl 2 => RET wird zu "freeze"
+#	Anzeige wechselt zwischen 1 und 2 => RET springt zu adresse 0
+#	Anzeige blinkt => RET wird ignoriert und gilt als NOP
+#
+# 00:	41	SET A=1
+# 01:	54	SET Dout=A
+# 02:	27	WAIT 200ms
+# 03:	42	SET A=2
+# 04:	54	SET Dout=A
+# 05:	27	WAIT 200ms
+# 06:	E0	RET
+# 07:	7A	SET A=~A
+# 08:	27	WAIT 200ms
+# 09:	54	SET Dout=A
+# 0A:	33	JUMP -3
+#
+import re
+data='41 54 27 42 54 27 E0 7A 27 54 33'
+data = re.sub(r'[^0-9a-fA-F]+','', data)
+for b in [int(data[i:i+2],16) for i in range(0,len(data),2)]:
+	programmiereByte(b)
+
+------------------
+
+# Testprogramm 4:
+# Was passiert bei Division durch 0?
+#
+# 40	SET A=0
+# 51	SET B=A
+# 45	SET A=5
+# 76	SET A=A/B
+# 54	SET Dout=A
+# 30	JUMP -0		HALT
+#
+import re
+data='40 51 45 76 54 30'
+data = re.sub(r'[^0-9a-fA-F]+','', data)
+for b in [int(data[i:i+2],16) for i in range(0,len(data),2)]:
+	programmiereByte(b)
