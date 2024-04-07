@@ -1,0 +1,257 @@
+
+===================================================
+HT46F47 TPS "Assembly" language by Daniel Marschall
+===================================================
+
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+10	LED 0000	PORT 0
+11	LED 0001	PORT 1
+12	LED 0010	PORT 2
+13	LED 0011	PORT 3
+14	LED 0100	PORT 4
+15	LED 0101	PORT 5
+16	LED 0110	PORT 6
+17	LED 0111	PORT 7
+18	LED 1000	PORT 8
+19	LED 1001	PORT 9
+1A	LED 1010	PORT 10
+1B	LED 1011	PORT 11
+1C	LED 1100	PORT 12
+1D	LED 1101	PORT 13
+1E	LED 1110	PORT 14
+1F	LED 1111	PORT 15
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+20	WAIT 1ms
+21	WAIT 2ms
+22	WAIT 5ms
+23	WAIT 10ms
+24	WAIT 20ms
+25	WAIT 50ms
+26	WAIT 100ms
+27	WAIT 200ms
+28	WAIT 500ms
+29	WAIT 1s
+2A	WAIT 2s
+2B	WAIT 5s
+2C	WAIT 10s
+2D	WAIT 20s
+2E	WAIT 30s
+2F	WAIT 60s
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+30	JUMP -0		HALT
+31	JUMP -1
+32	JUMP -2
+33	JUMP -3
+34	JUMP -4
+35	JUMP -5
+36	JUMP -6
+37	JUMP -7
+38	JUMP -8
+39	JUMP -9
+3A	JUMP -10
+3B	JUMP -11
+3C	JUMP -12
+3D	JUMP -13
+3E	JUMP -14
+3F	JUMP -15
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+40	SET A=0
+41	SET A=1
+42	SET A=2
+43	SET A=3
+44	SET A=4
+45	SET A=5
+46	SET A=6
+47	SET A=7
+48	SET A=8
+49	SET A=9
+4A	SET A=10
+4B	SET A=11
+4C	SET A=12
+4D	SET A=13
+4E	SET A=14
+4F	SET A=15
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+50
+51	SET B=A
+52	SET C=A
+53	SET D=A
+54	SET Dout=A
+55	SET Dout.0=A.0
+56	SET Dout.1=A.0
+57	SET Dout.2=A.0
+58	SET Dout.3=A.0
+59	SET PWM=A
+5A
+5B
+5C
+5D
+5E
+5F
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+60
+61	SET A=B
+62	SET A=C
+63	SET A=D
+64	SET A=Din
+65	SET A=Din.0
+66	SET A=Din.1
+67	SET A=Din.2
+68	SET A=Din.3
+69	SET A=AD1
+6A	SET A=AD2
+6B
+6C
+6D
+6E
+6F
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+70
+71	SET A=A+1
+72	SET A=A-1
+73	SET A=A+B
+74	SET A=A-B
+75	SET A=A*B
+76	SET A=A/B
+77	SET A=A&B			AND
+78	SET A=A|B			OR
+79	SET A=A^B			XOR
+7A	SET A=~A			NOT
+7B
+7C
+7D
+7E
+7F
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+80	PAGE 0				Page is used by JUMP, CALL, CTIMES and DTIMES
+81	PAGE 1
+82	PAGE 2
+83	PAGE 3
+84	PAGE 4
+85	PAGE 5
+86	PAGE 6
+87	PAGE 7
+88	PAGE 8
+89	PAGE 9
+8A	PAGE A
+8B	PAGE B
+8C	PAGE C
+8D	PAGE D
+8E	PAGE E
+8F	PAGE F
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+90	JUMP <PAGE>0
+91	JUMP <PAGE>1
+92	JUMP <PAGE>2
+93	JUMP <PAGE>3
+94	JUMP <PAGE>4
+95	JUMP <PAGE>5
+96	JUMP <PAGE>6
+97	JUMP <PAGE>7
+98	JUMP <PAGE>8
+99	JUMP <PAGE>9
+9A	JUMP <PAGE>A
+9B	JUMP <PAGE>B
+9C	JUMP <PAGE>C
+9D	JUMP <PAGE>D
+9E	JUMP <PAGE>E
+9F	JUMP <PAGE>F
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+A0	CTIMES <PAGE>0			IF C>0 THEN ( C=C-1 ; JUMP <PAGE>X ) ELSE CONTINUE
+A1	CTIMES <PAGE>1
+A2	CTIMES <PAGE>2
+A3	CTIMES <PAGE>3
+A4	CTIMES <PAGE>4
+A5	CTIMES <PAGE>5
+A6	CTIMES <PAGE>6
+A7	CTIMES <PAGE>7
+A8	CTIMES <PAGE>8
+A9	CTIMES <PAGE>9
+AA	CTIMES <PAGE>A
+AB	CTIMES <PAGE>B
+AC	CTIMES <PAGE>C
+AD	CTIMES <PAGE>D
+AE	CTIMES <PAGE>E
+AF	CTIMES <PAGE>F
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+B0	DTIMES <PAGE>0			IF D>0 THEN ( D=D-1 ; JUMP <PAGE>X ) ELSE CONTINUE
+B1	DTIMES <PAGE>1
+B2	DTIMES <PAGE>2
+B3	DTIMES <PAGE>3
+B4	DTIMES <PAGE>4
+B5	DTIMES <PAGE>5
+B6	DTIMES <PAGE>6
+B7	DTIMES <PAGE>7
+B8	DTIMES <PAGE>8
+B9	DTIMES <PAGE>9
+BA	DTIMES <PAGE>A
+BB	DTIMES <PAGE>B
+BC	DTIMES <PAGE>C
+BD	DTIMES <PAGE>D
+BE	DTIMES <PAGE>E
+BF	DTIMES <PAGE>F
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+C0
+C1	SKIP_IF A>B
+C2	SKIP_IF A<B
+C3	SKIP_IF A=B
+C4	SKIP_IF Din.0=1
+C5	SKIP_IF Din.1=1
+C6	SKIP_IF Din.2=1
+C7	SKIP_IF Din.3=1
+C8	SKIP_IF Din.0=0
+C9	SKIP_IF Din.1=0
+CA	SKIP_IF Din.2=0
+CB	SKIP_IF Din.3=0
+CC	SKIP_IF S1=0
+CD	SKIP_IF S2=0
+CE	SKIP_IF S1=1
+CF	SKIP_IF S2=1
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+D0	CALL <PAGE>0
+D1	CALL <PAGE>1
+D2	CALL <PAGE>2
+D3	CALL <PAGE>3
+D4	CALL <PAGE>4
+D5	CALL <PAGE>5
+D6	CALL <PAGE>6
+D7	CALL <PAGE>7
+D8	CALL <PAGE>8
+D9	CALL <PAGE>9
+DA	CALL <PAGE>A
+DB	CALL <PAGE>B
+DC	CALL <PAGE>C
+DD	CALL <PAGE>D
+DE	CALL <PAGE>E
+DF	CALL <PAGE>F
+----------------------------------------------------
+Code	Assembly	Alternative	Comment
+----------------------------------------------------
+E0	RET
+FF	NONE
