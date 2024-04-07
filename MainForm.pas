@@ -57,6 +57,7 @@ type
   private
     PleaseStop: boolean;
     procedure ResetGui;
+    procedure WaitMs(milliseconds: integer);
   end;
 
 var
@@ -74,6 +75,18 @@ type
 
 { TForm2 }
 
+procedure TForm2.WaitMs(milliseconds: integer);
+var
+  i: integer;
+begin
+  for i := 0 to milliseconds div 10 do
+  begin
+    Sleep(10);
+    Application.ProcessMessages;
+    if PleaseStop or Application.Terminated then break;
+  end;
+end;
+
 procedure TForm2.BtnStartClick(Sender: TObject);
 var
   x: THT46F47;
@@ -89,72 +102,80 @@ begin
   BtnRandom.Enabled := false;
 
   x := THT46F47.Create;
+  try
+    x.OnWait := WaitMs;
 
-  s := '';
-  ci := 0;
-  for i := 1 to Length(Memo2.Text) do
-  begin
-    if Memo2.Text[i] in ['a'..'f', 'A'..'F', '0'..'9'] then
+    s := '';
+    ci := 0;
+    for i := 1 to Length(Memo2.Text) do
     begin
-      s := s + Memo2.Text[i];
+      {$IFDEF UNICODE}
+      if CharInSet(Memo2.Text[i], ['a'..'f', 'A'..'F', '0'..'9']) then
+      {$ELSE}
+      if Memo2.Text[i] in ['a'..'f', 'A'..'F', '0'..'9'] then
+      {$ENDIF}
+      begin
+        s := s + Memo2.Text[i];
+      end;
+      if Length(s) = 2 then
+      begin
+        if ci > $FF then raise ECodeTooLong.Create(SCodeTooLong);
+        x.ROM[ci] := StrToInt('$'+s);
+        s := '';
+        Inc(ci);
+      end;
     end;
-    if Length(s) = 2 then
+
+    while true do
     begin
-      if ci > $FF then raise ECodeTooLong.Create(SCodeTooLong);
-      x.ROM[ci] := StrToInt('$'+s);
-      s := '';
-      Inc(ci);
+      {$REGION 'Input stuff'}
+      tmp_din := 0;
+      if CheckBox1.Checked then Inc(tmp_din, 1);
+      if CheckBox2.Checked then Inc(tmp_din, 2);
+      if CheckBox3.Checked then Inc(tmp_din, 4);
+      if CheckBox4.Checked then Inc(tmp_din, 8);
+      x.DIn := tmp_din;
+      x.AD1 := SpinEdit1.Value;
+      x.AD2 := SpinEdit2.Value;
+      x.S1 := CheckBox5.Checked;
+      x.S2 := CheckBox6.Checked;
+      {$ENDREGION}
+      x.Step;
+      {$REGION 'Show output stuff (LEDs)'}
+      if ((x.PortOut and 1) shr 0) = 1 then Panel1.Color := clRed else Panel1.Color := clMaroon;
+      if ((x.PortOut and 2) shr 1) = 1 then Panel2.Color := clRed else Panel2.Color := clMaroon;
+      if ((x.PortOut and 4) shr 2) = 1 then Panel3.Color := clRed else Panel3.Color := clMaroon;
+      if ((x.PortOut and 8) shr 3) = 1 then Panel4.Color := clRed else Panel4.Color := clMaroon;
+      SpinEdit3.Value := x.PWM;
+      {$ENDREGION}
+      {$REGION 'Debug output: Internal state'}
+      Label8.Caption := IntToHex(x.PC, 2);
+      Label2.Caption := IntToHex(x.Page, 1);
+      Label4.Caption := IntToHex(x.ReturnAddress, 2);
+      Label6.Caption := IntToHex(x.RegA, 1);
+      Label10.Caption := IntToHex(x.RegB, 1);
+      Label12.Caption := IntToHex(x.RegC, 1);
+      Label14.Caption := IntToHex(x.RegD, 1);
+      {$ENDREGION}
+      Application.ProcessMessages;
+      if Application.Terminated or PleaseStop then
+      begin
+        PleaseStop := false;
+        Break;
+      end;
     end;
+
+    Memo2.Enabled := true;
+    BtnRandom.Enabled := true;
+    BtnStart.Enabled := true;
+    ResetGui;
+  finally
+    FreeAndNil(x);
   end;
-
-  while true do
-  begin
-    {$REGION 'Input stuff'}
-    tmp_din := 0;
-    if CheckBox1.Checked then Inc(tmp_din, 1);
-    if CheckBox2.Checked then Inc(tmp_din, 2);
-    if CheckBox3.Checked then Inc(tmp_din, 4);
-    if CheckBox4.Checked then Inc(tmp_din, 8);
-    x.DIn := tmp_din;
-    x.AD1 := SpinEdit1.Value;
-    x.AD2 := SpinEdit2.Value;
-    x.S1 := CheckBox5.Checked;
-    x.S2 := CheckBox6.Checked;
-    {$ENDREGION}
-    x.Step;
-    {$REGION 'Show output stuff (LEDs)'}
-    if ((x.PortOut and 1) shr 0) = 1 then Panel1.Color := clRed else Panel1.Color := clMaroon;
-    if ((x.PortOut and 2) shr 1) = 1 then Panel2.Color := clRed else Panel2.Color := clMaroon;
-    if ((x.PortOut and 4) shr 2) = 1 then Panel3.Color := clRed else Panel3.Color := clMaroon;
-    if ((x.PortOut and 8) shr 3) = 1 then Panel4.Color := clRed else Panel4.Color := clMaroon;
-    SpinEdit3.Value := x.PWM;
-    {$ENDREGION}
-    {$REGION 'Debug output: Internal state'}
-    Label8.Caption := IntToHex(x.PC, 2);
-    Label2.Caption := IntToHex(x.Page, 1);
-    Label4.Caption := IntToHex(x.ReturnAddress, 2);
-    Label6.Caption := IntToHex(x.RegA, 1);
-    Label10.Caption := IntToHex(x.RegB, 1);
-    Label12.Caption := IntToHex(x.RegC, 1);
-    Label14.Caption := IntToHex(x.RegD, 1);
-    {$ENDREGION}
-    Application.ProcessMessages;
-    if Application.Terminated or PleaseStop then
-    begin
-      PleaseStop := false;
-      Break;
-    end;
-  end;
-
-  Memo2.Enabled := true;
-  BtnRandom.Enabled := true;
-  BtnStart.Enabled := true;
-  ResetGui;
 end;
 
 procedure TForm2.BtnStopClick(Sender: TObject);
 begin
-  // TODO: actually we need to inform the THT46F47 object, so it can break out of a possible waiting loop
   BtnStop.Enabled := false;
   PleaseStop := true;
 end;

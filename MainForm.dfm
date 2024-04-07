@@ -1,6 +1,8 @@
 object Form2: TForm2
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = 'HT46F47 Simulator'
   ClientHeight = 662
   ClientWidth = 851
@@ -10,10 +12,8 @@ object Form2: TForm2
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Label20: TLabel
     Left = 24

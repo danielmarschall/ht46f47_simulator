@@ -7,10 +7,13 @@ type
 
   TRom = array[0..$FF] of byte;
 
+  TWaitEvent = procedure(milliseconds: integer) of object;
+
   THT46F47 = class(TObject)
   strict private
     procedure WaitMs(milliseconds: integer);
   strict protected
+    FOnWait: TWaitEvent;
     // ROM
     // Registers
     FPC: byte;
@@ -52,6 +55,7 @@ type
     property PWM: Nibble read FPWM;
     property PortOut: Nibble read FPortOut;
     // Functions
+    property OnWait: TWaitEvent read FOnWait write FOnWait;
     constructor Create;
     procedure Step;
     procedure Reset;
@@ -538,15 +542,11 @@ begin
 end;
 
 procedure THT46F47.WaitMs(milliseconds: integer);
-var
-  i: integer;
 begin
-  for i := 0 to milliseconds div 10 do
-  begin
-    Sleep(10);
-    Application.ProcessMessages;
-    if Application.Terminated then break;
-  end;
+  if Assigned(FOnWait) then
+    FOnWait(milliseconds)
+  else
+    Sleep(milliseconds);
 end;
 
 end.
