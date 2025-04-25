@@ -11,4 +11,4 @@ More information [here](https://github.com/danielmarschall/ht46f47_simulator/tre
 
 [Download for Windows](https://github.com/danielmarschall/ht46f47_simulator/raw/master/HT46F47Sim.exe)
 
-![Screenshot](https://raw.githubusercontent.com/danielmarschall/ht46f47_simulator/master/Screenshot.png)
+![Screenshot](Screenshot.png)
